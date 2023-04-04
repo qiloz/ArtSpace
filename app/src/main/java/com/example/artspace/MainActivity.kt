@@ -48,7 +48,7 @@ fun ArtSpaceApp() {
     ArtSpaceInstance(
         modifier = Modifier
             .fillMaxSize()
-            .fillMaxHeight(0.8f)
+//            .fillMaxHeight(0.8f)
 //            .wrapContentSize(Alignment.TopCenter)
             .padding(10.dp)
 
@@ -62,17 +62,17 @@ fun ArtSpaceInstance(
     var numOfPic by remember {
         mutableStateOf(1)
     }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround,
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
 
         // description section
         val robotoFont = FontFamily(
             Font(R.font.roboto_light, FontWeight.Light)
         )
-
 
         Spacer(
             modifier = Modifier
@@ -86,7 +86,6 @@ fun ArtSpaceInstance(
             modifier = Modifier
                 .padding(10.dp)
         )
-
         Column(
             modifier = Modifier
                 .shadow(1.dp)
@@ -111,29 +110,27 @@ fun ArtSpaceInstance(
                 Text(text = "$numOfPic") // NOTE: DEBUG
             }
         }
-    }
-
-    Spacer(
-        modifier = Modifier
-            .height(5.dp)
-    )
-
-    // buttons section
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(0.8f),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        val buttonSize = Modifier.width(100.dp)
-        Button(onClick = {
-            numOfPic--
-        }, buttonSize) {
-            Text(text = "Previous")
-        }
-        Button(onClick = {
-            numOfPic++
-        }, buttonSize) {
-            Text(text = "Next")
+        Spacer(
+            modifier = Modifier
+                .height(5.dp)
+        )
+        // buttons section
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(0.8f),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val buttonSize = Modifier.width(100.dp)
+            Button(onClick = {
+                numOfPic--
+            }, buttonSize) {
+                Text(text = "Previous")
+            }
+            Button(onClick = {
+                numOfPic++
+            }, buttonSize) {
+                Text(text = "Next")
+            }
         }
     }
 }
@@ -150,25 +147,34 @@ fun GetPicture(
         5 -> R.drawable.picture_5
         else -> R.drawable.picture_6
     }
+    val img = painterResource(id = pictureData)
+    val sizeImgWidth = img.intrinsicSize.width
+    val sizeImgHeight = img.intrinsicSize.height
+
     Box(
         modifier = Modifier
 //            .wrapContentSize(align = Alignment.TopStart, unbounded = true)
             .shadow(1.dp)
 
+
     ) {
-        val img = painterResource(id = pictureData)
+
         Image(
             painter = img,
             contentDescription = null,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .padding(10.dp)
 //                .wrapContentSize(align = Alignment.TopStart, unbounded = true)
-                .fillMaxSize(),
+//                .fillMaxSize()
+//                .fillMaxWidth(sizeImg.width)
+                .widthIn(min = sizeImgWidth.dp / 2, max = sizeImgWidth.dp)
+                .heightIn(min = sizeImgHeight.dp / 2.4f, max  = sizeImgHeight.dp)
 
-            )
-
+        )
+//        Text(text = sizeImgWidth.toString())
     }
+
 }
 
 fun getRandomValue(
