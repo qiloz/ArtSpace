@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">ArtSpace</string>
+
+    <string name="title_1">Bird</string>
+    <string name="artist_1">Halle Cuevas</string>
+    <string name="year_1">2001</string>
+
+    <string name="title_2">Cat</string>
+    <string name="artist_2">Amaya House</string>
+    <string name="year_2">2010</string>
+
+    <string name="title_3">Parrot</string>
+    <string name="artist_3">Chiara Christian</string>
+    <string name="year_3">1992</string>
+
+    <string name="title_4">Squirrel</string>
+    <string name="artist_4">Mustafa Farrell</string>
+    <string name="year_4">2004</string>
+
+    <string name="title_5">Owl</string>
+    <string name="artist_5">Aarav Bradley</string>
+    <string name="year_5">2015</string>
+
+    <string name="title_6">White Cat</string>
+    <string name="artist_6">Yahya Bishop</string>
+    <string name="year_6">2012</string>
 </resources>
