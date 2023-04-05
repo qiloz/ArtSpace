@@ -71,10 +71,12 @@ fun ArtSpaceApp() {
 @Composable
 fun ArtSpacePortraitViewImg(modifier: Modifier = Modifier) {
     var imageIndex by remember {
-        mutableStateOf(1)
+        mutableStateOf(3) // TODO: Change to 1
     }
     Column(
-        modifier = modifier, verticalArrangement = Arrangement.SpaceBetween
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ImageContainer(imageIndex)
         Column(
@@ -121,8 +123,11 @@ fun ImageContainer(imageIndex: Int = 1) {
     }
 
     val imgPainter = painterResource(id = img)
+    val imgWidth = imgPainter.intrinsicSize.width
+    val imgHeight = imgPainter.intrinsicSize.width
     Row(
-        modifier = Modifier.shadow(1.dp)
+        modifier = Modifier.shadow(1.dp),
+        horizontalArrangement = Arrangement.Center
     ) {
         Image(
             painter = imgPainter,
@@ -130,7 +135,8 @@ fun ImageContainer(imageIndex: Int = 1) {
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .padding(20.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(0.8f)
+//                .clipToBounds()
         )
         // TODO: Realise contentDescription for Image
     }
