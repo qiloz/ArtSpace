@@ -1,5 +1,6 @@
 package com.example.artspace
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,71 +41,77 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
-@Preview(
-    showBackground = true,
-)
+@Preview(showBackground = true, showSystemUi = true)
 fun ArtSpaceApp() {
-    ArtSpaceInstance(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp)
-    )
+    val deviceConfig = LocalConfiguration.current
+
+    // TODO: edit ASAP
+    val portraitModifier = Modifier
+        .fillMaxSize()
+        .padding(20.dp)
+
+    val landscapeModifier = Modifier
+        .fillMaxSize()
+        .padding(20.dp)
+
+    when (deviceConfig.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            ArtSpaceLandscapeViewImg(modifier = landscapeModifier)
+        }
+        Configuration.ORIENTATION_PORTRAIT -> {
+            ArtSpacePortraitViewImg(modifier = portraitModifier)
+        }
+        Configuration.ORIENTATION_SQUARE -> {}
+        Configuration.ORIENTATION_UNDEFINED -> {}
+    }
 }
 
 @Composable
-fun ArtSpaceInstance(
-    modifier: Modifier = Modifier
-) {
-    var numOfPic by remember {
+fun ArtSpacePortraitViewImg(modifier: Modifier = Modifier) {
+    var imageIndex by remember {
         mutableStateOf(1)
     }
-
     Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier, verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Spacer(
-            modifier = Modifier.padding(10.dp)
-        )
-        // Picture section
-        GetPicture(picIndex = numOfPic)
-
-        // Description section
-        Spacer(
-            modifier = Modifier.padding(10.dp)
-        )
-        PrintDescription(picIndex = numOfPic)
-
-        Spacer(
-            modifier = Modifier.height(5.dp)
-        )
-        // buttons section
-        Row(
-            modifier = Modifier.fillMaxWidth(0.8f), horizontalArrangement = Arrangement.SpaceBetween
+        ImageContainer(imageIndex)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val buttonSize = Modifier.width(100.dp)
-            Button(onClick = {
-                numOfPic = switchImage(numOfPic, maxItems = 6, inverse = true)
-            }, buttonSize) {
-                Text(text = "Previous")
-            }
-            Text(text = numOfPic.toString())
-            Button(onClick = {
-                numOfPic = switchImage(numOfPic, maxItems = 6, inverse = false)
-            }, buttonSize) {
-                Text(text = "Next")
+            DescriptionContainer(imageIndex)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                val buttonWidth = Modifier.width(80.dp)
+                Button(onClick = { /*TODO: Decrement*/ imageIndex-- }) {
+                    Text(
+                        modifier = buttonWidth, text = "Previous", textAlign = TextAlign.Center
+                    )
+                }
+
+                Button(onClick = { /*TODO: Increment*/ imageIndex++ }) {
+                    Text(
+                        modifier = buttonWidth, text = "Next", textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun GetPicture(
-    picIndex: Int,
-) {
-    val pictureData = when (picIndex) {
+fun ArtSpaceLandscapeViewImg(modifier: Modifier = Modifier) {
+    // TODO: Implement portrait version
+}
+
+@Composable
+fun ImageContainer(imageIndex: Int = 1) {
+    val img = when (imageIndex) {
         1 -> R.drawable.picture_1
         2 -> R.drawable.picture_2
         3 -> R.drawable.picture_3
@@ -113,100 +120,61 @@ fun GetPicture(
         else -> R.drawable.picture_6
     }
 
-    Box(
+    val imgPainter = painterResource(id = img)
+    Row(
         modifier = Modifier.shadow(1.dp)
     ) {
-        val img = painterResource(id = pictureData)
-        val sizeImgWidth = img.intrinsicSize.width
-        val sizeImgHeight = img.intrinsicSize.height
         Image(
-            painter = img,
+            painter = imgPainter,
             contentDescription = null,
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
-                .padding(10.dp)
-                .widthIn(min = sizeImgWidth.dp / 2, max = sizeImgWidth.dp)
-                .heightIn(min = sizeImgHeight.dp / 2.4f, max = sizeImgHeight.dp)
+                .padding(20.dp)
+                .fillMaxWidth()
         )
+        // TODO: Realise contentDescription for Image
     }
 }
 
 @Composable
-fun PrintDescription(
-    picIndex: Int
-) {
-    val robotoFont = FontFamily(
-        Font(R.font.roboto_light, FontWeight.Light)
-    )
-    val title = when (picIndex) {
-        1 -> stringResource(id = R.string.title_1)
-        2 -> stringResource(id = R.string.title_2)
-        3 -> stringResource(id = R.string.title_3)
-        4 -> stringResource(id = R.string.title_4)
-        5 -> stringResource(id = R.string.title_5)
-        else -> stringResource(id = R.string.title_6)
+fun DescriptionContainer(imageIndex: Int = 1) {
+    val titleImg: Int = when (imageIndex) {
+        1 -> R.string.title_1
+        2 -> R.string.title_2
+        3 -> R.string.title_3
+        4 -> R.string.title_4
+        5 -> R.string.title_5
+        else -> R.string.title_6
     }
 
-    val artist = when (picIndex) {
-        1 -> stringResource(id = R.string.artist_1)
-        2 -> stringResource(id = R.string.artist_2)
-        3 -> stringResource(id = R.string.artist_3)
-        4 -> stringResource(id = R.string.artist_4)
-        5 -> stringResource(id = R.string.artist_5)
-        else -> stringResource(id = R.string.artist_6)
+    val artistImg: Int = when (imageIndex) {
+        1 -> R.string.artist_1
+        2 -> R.string.artist_2
+        3 -> R.string.artist_3
+        4 -> R.string.artist_4
+        5 -> R.string.artist_5
+        else -> R.string.artist_6
     }
 
-    val year = when (picIndex) {
-        1 -> stringResource(id = R.string.year_1)
-        2 -> stringResource(id = R.string.year_2)
-        3 -> stringResource(id = R.string.year_3)
-        4 -> stringResource(id = R.string.year_4)
-        5 -> stringResource(id = R.string.year_5)
-        else -> stringResource(id = R.string.year_6)
+    val yearImg: Int = when (imageIndex) {
+        1 -> R.string.year_1
+        2 -> R.string.year_2
+        3 -> R.string.year_3
+        4 -> R.string.year_4
+        5 -> R.string.year_5
+        else -> R.string.year_6
     }
 
     Column(
         modifier = Modifier
-            .shadow(1.dp)
-            .fillMaxWidth(0.8f)
-            .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 10.dp)
+            .shadow(2.dp)
+            .padding(15.dp)
     ) {
-        Text(
-            text = title, fontSize = 25.sp, fontFamily = robotoFont, fontWeight = FontWeight.Light
-        )
+        Text(stringResource(id = titleImg), fontSize = 25.sp)
         Row {
-            Text(
-                modifier = Modifier.padding(end = 5.dp), text = artist, fontWeight = FontWeight(500)
-            )
-            Text(text = year)
+            Text(stringResource(id = artistImg), fontWeight = FontWeight(800), fontSize = 14.sp)
+            Spacer(modifier = Modifier.width(5.dp))
+            Text("(${stringResource(id = yearImg)})", fontSize = 14.sp)
         }
     }
-}
-
-fun switchImage(
-    value: Int = 1, maxItems: Int = 1, inverse: Boolean = false
-): Int {
-    var updatedValue: Int = value
-    if (!inverse) {
-        updatedValue++
-        if (updatedValue > maxItems) {
-            return 1
-        } else {
-            return updatedValue
-        }
-    } else {
-        updatedValue--
-        if (updatedValue < 1) {
-            return maxItems
-        } else {
-            return updatedValue
-        }
-    }
-}
-
-// TODO: Make open app with random picture with function below
-fun getRandomValue(
-    values: IntRange
-): Int {
-    return (values).random()
 }
