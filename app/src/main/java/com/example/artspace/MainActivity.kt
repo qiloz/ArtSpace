@@ -54,7 +54,6 @@ fun ArtSpaceApp() {
 
     val landscapeModifier = Modifier
         .fillMaxSize()
-        .padding(20.dp)
 
     when (deviceConfig.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
@@ -78,7 +77,9 @@ fun ArtSpacePortraitViewImg(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ImageContainer(imageIndex)
+        Spacer(modifier = Modifier.width(13.dp))
+        ImageContainer(imageIndex, 0.6f)
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -108,11 +109,47 @@ fun ArtSpacePortraitViewImg(modifier: Modifier = Modifier) {
 
 @Composable
 fun ArtSpaceLandscapeViewImg(modifier: Modifier = Modifier) {
-    // TODO: Implement portrait version
+    var imageIndex by remember {
+        mutableStateOf(3)
+    }
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.width(13.dp))
+        Row {
+            ImageContainer(imageIndex, 0.3f)
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            DescriptionContainer(imageIndex)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                val buttonWidth = Modifier.width(80.dp)
+                Button(onClick = { /*TODO: Decrement*/ imageIndex-- }) {
+                    Text(
+                        modifier = buttonWidth, text = "Previous", textAlign = TextAlign.Center
+                    )
+                }
+
+                Button(onClick = { /*TODO: Increment*/ imageIndex++ }) {
+                    Text(
+                        modifier = buttonWidth, text = "Next", textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
-fun ImageContainer(imageIndex: Int = 1) {
+fun ImageContainer(imageIndex: Int = 1, imageSize: Float = 0.8f) {
     val img = when (imageIndex) {
         1 -> R.drawable.picture_1
         2 -> R.drawable.picture_2
@@ -121,23 +158,58 @@ fun ImageContainer(imageIndex: Int = 1) {
         5 -> R.drawable.picture_5
         else -> R.drawable.picture_6
     }
-
+    val deviceConfig = LocalConfiguration.current
     val imgPainter = painterResource(id = img)
     val imgWidth = imgPainter.intrinsicSize.width
-    val imgHeight = imgPainter.intrinsicSize.width
+    val imgHeight = imgPainter.intrinsicSize.height
     Row(
         modifier = Modifier.shadow(1.dp),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = imgPainter,
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth(0.8f)
-//                .clipToBounds()
-        )
+        if (imgHeight.dp / 6 > deviceConfig.screenHeightDp.dp / 4) {
+            Image(
+                painter = imgPainter,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .padding(20.dp)
+                    .requiredSizeIn(
+                        minWidth = imgWidth.dp / 6,
+                        maxWidth = imgWidth.dp,
+                        minHeight = imgHeight.dp,
+                        maxHeight = imgHeight.dp / 6
+                    )
+            )
+        } else if (imgHeight.dp / 2 > deviceConfig.screenHeightDp.dp / 2) {
+            Image(
+                painter = imgPainter,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .padding(20.dp)
+                    .requiredSizeIn(
+                        minWidth = imgWidth.dp / 3,
+                        maxWidth = imgWidth.dp,
+                        minHeight = imgHeight.dp,
+                        maxHeight = imgHeight.dp / 3
+                    )
+            )
+        } else {
+            Image(
+                painter = imgPainter,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .padding(20.dp)
+                    .requiredSizeIn(
+                        minWidth = imgWidth.dp / 2,
+                        maxWidth = imgWidth.dp,
+                        minHeight = imgHeight.dp,
+                        maxHeight = imgHeight.dp / 2
+                    )
+            )
+        }
         // TODO: Realise contentDescription for Image
     }
 }
